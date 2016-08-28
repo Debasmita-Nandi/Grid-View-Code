@@ -1,0 +1,562 @@
+public class Abv_Core_KAM_Competitor_Sales_Grid
+{
+    /* Global Variables and Lists Declaration */
+    public List<Abv_Core_KAM_Competitor_Sales__c > records=new List<Abv_Core_KAM_Competitor_Sales__c >();
+    List<Abv_Core_KAM_Competitor_Sales__c > toBeUpdatedList = new List<Abv_Core_KAM_Competitor_Sales__c >();
+    List<Abv_Core_KAM_Competitor_Sales__c > listUsedToCheck = new List<Abv_Core_KAM_Competitor_Sales__c >();
+    public List<Abv_Core_KAM_Competitor_Sales__c >lstAcct1  = new List<Abv_Core_KAM_Competitor_Sales__c >();
+    public Boolean b{get;set;}
+    public Id Acc_Id {get;set;}
+    public Id Del_Id {get;set;}
+    public List<Abv_Core_KAM_Competitor_Sales__c >del_lst= new List<Abv_Core_KAM_Competitor_Sales__c >();
+    Public Account a{get;set;}
+    public Integer count{get;set;}
+    public boolean dupepopup {get; set;}
+    public boolean nonepopup {get; set;}
+    public boolean matrixpopup {get; set;}
+    public boolean valid1popup {get; set;}
+    public boolean valid2popup {get; set;}
+    public boolean delpopup {get; set;}
+    public boolean delpopup_KAM {get; set;}
+    public boolean errchk {get; set;}
+    public boolean inedit {get; set;}
+    public integer index = 0;
+    public integer curRecs=0;
+    public boolean ineditb {get; set;}
+    public boolean ineditb1 {get; set;}
+    public boolean inedit1 {get; set;}
+    public boolean ineditpr {get; set;}
+    public boolean ineditpr1 {get; set;}
+    public boolean inedite {get; set;}
+    public boolean inedite1 {get; set;}
+    public String custLabelNone = System.Label.ABV_CORE_KAM_None;
+    public String custLabelNKAM = System.Label.ABV_CORE_KAM_NKAM;
+    
+    public integer blockSize =6;
+    public integer totalRecs=[select count() from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c=:ApexPages.currentPage().getParameters().get('id')];
+    
+    /* Fetch the total no of records */
+    public integer gettotalRecs()
+    {
+        totalRecs=[select count() from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c=:ApexPages.currentPage().getParameters().get('id')];
+        return totalRecs;
+    }
+    
+    /* Provides the index to display records*/
+    public integer getindex()
+    {
+        return index;
+    }
+    
+    /* Provides the current number records to be shown */
+    public integer getcurRecs()
+    {
+        totalRecs=[select count() from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c=:ApexPages.currentPage().getParameters().get('id')];
+        if ( index==0 && totalRecs<blockSize)
+        {
+            return totalRecs;
+        }
+        else if ( (index + blockSize) >= totalRecs)
+        {
+            return totalRecs;
+        }
+        else
+        {
+            return blockSize+index;
+        }
+    }
+    
+    /* Provides the list of Competitor Products to be displayed in the Page */
+    public List<SelectOption> getProductNames()
+    {
+        User u = [select Abv_Core_Country_Flag__c from User where Id = :UserInfo.getUserId() limit 1];
+        String cf='%'+ u.Abv_Core_Country_Flag__c+'%';
+        List<SelectOption> options = new List<SelectOption>();
+        List<Product_vod__c> productlist =[SELECT Name,id FROM Product_vod__c WHERE Company_Product_vod__c = false and Product_Type_vod__c ='Detail'  and Abv_CORE_Country_Flag__c LIKE :cf order by Name];
+        options.add(new SelectOption(custLabelNone ,'- - - - - - - - - - -'+custLabelNone+' - - - - - - - - '));       
+        for (Integer j=0;j<productlist.size();j++)
+        {
+            options.add(new SelectOption(productlist[j].Id ,productlist[j].Name ));
+        }
+        return options;
+    }
+    
+    /* Provides the list of Matrix picklist values */
+    public List<SelectOption> getMatrix()
+    {
+        List<SelectOption> options = new List<SelectOption>();
+        options.add(new SelectOption(custLabelNone,'- - - '+custLabelNone+'- - - '));
+      
+        list<Schema.Picklistentry> pv= Abv_Core_KAM_Competitor_Sales__c.fields.Abv_Core_KAM_Matrix__c.getDescribe().getpicklistvalues();
+        for (Schema.Picklistentry p:pv)
+        {
+            options.add(new SelectOption(p.getValue() ,p.getValue() ));
+        }
+        return options;
+    }
+
+    /* Provides the list of records to be shown in the page currently */
+    public List<Abv_Core_KAM_Competitor_Sales__c > getrecords()
+    {
+        if(!errchk && !inedit1 && !ineditpr1 && !ineditb1 && !inedite1)
+        {
+            List<Abv_Core_KAM_Competitor_Sales__c > newRecords = new List<Abv_Core_KAM_Competitor_Sales__c >();
+            for (Abv_Core_KAM_Competitor_Sales__c  r : records) 
+            {
+                if (r.Id == null ) 
+                {
+                    newRecords.add(r);
+                }
+            } 
+            records= [select Lastmodifieddate,id,Abv_Core_KAM_Competitor_Product__c,Abv_Core_KAM_January__c,Abv_Core_KAM_February__c,Abv_Core_KAM_March__c,Abv_Core_KAM_April__c,Abv_Core_KAM_May__c,Abv_Core_KAM_June__c,Abv_Core_KAM_July__c,Abv_Core_KAM_August__c,Abv_Core_KAM_September__c,Abv_Core_KAM_October__c,Abv_Core_KAM_November__c,Abv_Core_KAM_December__c,Abv_Core_KAM_Total__c,Abv_Core_KAM_Matrix__c from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c =:ApexPages.currentPage().getParameters().get('id') order by createddate desc limit : blocksize Offset :index ];
+            listUsedToCheck = records.deepClone(true,false,false);
+            
+            Integer counter=0;
+            if(newRecords.size()>0)
+            {
+                for(Abv_Core_KAM_Competitor_Sales__c r : newRecords)
+                {
+                    if(records.size()>0)
+                    {
+                        records.add(counter,r);
+                        counter++;
+                    }
+                    else
+                    {
+                        records.add(r);
+                    }
+                }
+            }
+            return records;
+        }
+        else 
+        {
+            return records;
+        }
+    }
+    
+    public void Abv_Core_KAM_Competitor_Sales_Grid(){}
+    /* Constructor Start */
+    public Abv_Core_KAM_Competitor_Sales_Grid(ApexPages.StandardController controller)
+    {  
+        errchk=false;
+        inedit=false;
+        inedit1=false;
+        ineditpr=false;
+        ineditpr1=false;
+        inedite=false;
+        inedite1=false;
+        ineditb=false;
+        ineditb1=false;
+        Acc_Id =ApexPages.currentPage().getParameters().get('id');
+    } 
+    /*Constructor End*/
+    
+    /* Function called when the save button is clicked, valid records are finally upserted into the database */
+    public void SaveK()
+    {
+        lstAcct1.clear();
+        for(Integer j = 0;j<records.size();j++)
+        {
+            if(records[j].Abv_Core_KAM_Competitor_Product__c=='None' && records[j].Id==null)
+            {
+                records.remove(j);
+                j=j-1;
+            }
+        }
+        
+        /* Upserting the current list with/without unsaved data in the grid */
+        try
+        {
+            upsert records;
+            errchk=false;
+            inedit=false;
+            inedit1=false;
+            inedite=false;
+            inedite1=false;
+            ineditb=false;
+            ineditb1=false;
+            ineditpr=false;
+            ineditpr1=false;
+        } 
+        /* Exception catching and boolean values being set to true for dispalying popups accordingly */
+        catch(Exception e)
+        {
+            if (e.getmessage().contains('Please enter a valid number')||e.getmessage().contains('Invalid number'))
+            { 
+                errchk=true;
+                valid1popup =True;
+            }
+            else if (e.getmessage().contains('Competitor Product Null !'))
+            nonepopup=true;
+            
+            else if (e.getmessage().contains('Matrix Null !'))
+            matrixpopup=true;
+            
+            else
+            valid2popup =True;    
+        }
+    }
+    
+    /* Adding new records in the Competitor Sales Grid */ 
+    public void AddMore()
+    {
+        beginning();
+        Abv_Core_KAM_Competitor_Sales__c  newRec=new Abv_Core_KAM_Competitor_Sales__c  (Abv_Core_KAM_Account__c =Acc_Id);
+        if(records.size()>0)
+        {
+            records.add(0,newRec);
+        }
+        else
+        {
+            records.add(newRec);
+        }
+    }
+    
+    /* Cancelling or reveting back any unsaved changes in the Competitor Sales Grid */
+    public void cancel()
+    { 
+        errchk=false;
+        inedit=false;
+        inedit1=false;
+        ineditpr=false;
+        ineditpr1=false;
+        inedite=false;
+        inedite1=false;
+        ineditb=false;
+        ineditb1=false;
+        records= [select id,Abv_Core_KAM_Competitor_Product__c,Abv_Core_KAM_January__c,Abv_Core_KAM_February__c,Abv_Core_KAM_March__c,Abv_Core_KAM_April__c,Abv_Core_KAM_May__c,Abv_Core_KAM_June__c,Abv_Core_KAM_July__c,Abv_Core_KAM_August__c,Abv_Core_KAM_September__c,Abv_Core_KAM_October__c,Abv_Core_KAM_November__c,Abv_Core_KAM_December__c,Abv_Core_KAM_Total__c,Abv_Core_KAM_Matrix__c  from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c =:ApexPages.currentPage().getParameters().get('id') order by Abv_Core_KAM_Competitor_Product__c asc];
+    }
+    
+    /* Deleting an already saved record from the Competitor Sales Grid */
+    public void Del()
+    {
+        User u = [select Abv_Core_KAM_Identifier__c from User where Id = :UserInfo.getUserId() limit 1];
+        String kf= u.Abv_Core_KAM_Identifier__c;
+        if(kf==custLabelNKAM)
+        {    
+            delpopup =true;
+        }
+        else
+        {
+            delpopup_KAM=true;
+        }
+    }
+    
+    /* Setting index position to the first page of the list without any check */
+    public void beginning()
+    {
+        index = 0;        
+    }
+    
+    /* Setting index position to the first page of the list if no unsaved data is present */
+    public void begining1()
+    {  
+        ineditb=false;
+        ineditb1=false;
+        for(Integer j = 0;j<records.size();j++)
+        {
+            if(records[j].Abv_Core_KAM_Competitor_Product__c==custLabelNone && records[j].Id==null)
+            {
+                records.remove(j);
+                j=j-1;
+            }
+        }
+        if(records.size()> listUsedToCheck.size())
+        {
+            ineditb=true;
+            ineditb1=true;
+        }
+   
+        for(Abv_Core_KAM_Competitor_Sales__c s1: records)
+        { 
+            for(Abv_Core_KAM_Competitor_Sales__c s2: listUsedToCheck)
+            { 
+                if(s1.id == s2.id && (s1.Abv_Core_KAM_Competitor_Product__c != s2.Abv_Core_KAM_Competitor_Product__c  || s1.Abv_Core_KAM_January__c != s2.Abv_Core_KAM_January__c||s1.Abv_Core_KAM_February__c != s2.Abv_Core_KAM_February__c|| s1.Abv_Core_KAM_March__c != s2.Abv_Core_KAM_March__c || s1.Abv_Core_KAM_April__c != s2.Abv_Core_KAM_April__c || s1.Abv_Core_KAM_May__c != s2.Abv_Core_KAM_May__c || s1.Abv_Core_KAM_June__c != s2.Abv_Core_KAM_June__c|| s1.Abv_Core_KAM_July__c != s2.Abv_Core_KAM_July__c|| s1.Abv_Core_KAM_August__c != s2.Abv_Core_KAM_August__c||s1.Abv_Core_KAM_September__c != s2.Abv_Core_KAM_September__c|| s1.Abv_Core_KAM_October__c != s2.Abv_Core_KAM_October__c|| s1.Abv_Core_KAM_November__c != s2.Abv_Core_KAM_November__c||s1.Abv_Core_KAM_December__c != s2.Abv_Core_KAM_December__c) )
+                {
+                    toBeUpdatedList.add(s1);
+                    ineditb=true;
+                    ineditb1=true;            
+                    break;
+                }
+                if(ineditb)
+                break;
+            }
+        }
+        if(!ineditb)
+        index = 0;       
+    }
+    
+    /* Setting index position to the previous page of the list if no unsaved data is present */
+    public void previous()
+    {
+        ineditpr=false;
+        ineditpr1=false;
+        for(Integer j = 0;j<records.size();j++)
+        {
+            if(records[j].Abv_Core_KAM_Competitor_Product__c==custLabelNone && records[j].Id==null)
+            {
+                records.remove(j);
+                j=j-1;
+            }
+        }
+        if(records.size()> listUsedToCheck.size())
+        {
+            ineditpr=true;
+            ineditpr1=true;
+        }
+        for(Abv_Core_KAM_Competitor_Sales__c s1: records)
+        { 
+            for(Abv_Core_KAM_Competitor_Sales__c s2: listUsedToCheck)
+            { 
+                if(s1.id == s2.id && (s1.Abv_Core_KAM_Competitor_Product__c != s2.Abv_Core_KAM_Competitor_Product__c  || s1.Abv_Core_KAM_January__c != s2.Abv_Core_KAM_January__c||s1.Abv_Core_KAM_February__c != s2.Abv_Core_KAM_February__c|| s1.Abv_Core_KAM_March__c != s2.Abv_Core_KAM_March__c || s1.Abv_Core_KAM_April__c != s2.Abv_Core_KAM_April__c || s1.Abv_Core_KAM_May__c != s2.Abv_Core_KAM_May__c || s1.Abv_Core_KAM_June__c != s2.Abv_Core_KAM_June__c|| s1.Abv_Core_KAM_July__c != s2.Abv_Core_KAM_July__c|| s1.Abv_Core_KAM_August__c != s2.Abv_Core_KAM_August__c||s1.Abv_Core_KAM_September__c != s2.Abv_Core_KAM_September__c|| s1.Abv_Core_KAM_October__c != s2.Abv_Core_KAM_October__c|| s1.Abv_Core_KAM_November__c != s2.Abv_Core_KAM_November__c||s1.Abv_Core_KAM_December__c != s2.Abv_Core_KAM_December__c) )
+                {
+                    toBeUpdatedList.add(s1);
+                    ineditpr=true;
+                    ineditpr1=true;
+                    break;
+                }
+                if(ineditpr)
+                break;
+            }
+        }       
+        if(!ineditpr)
+        index = index - blockSize;
+    }    
+    
+    /* Setting index position to the next page of the list if no unsaved data is present */
+    public void next()
+    {
+        inedit=false;
+        inedit1=false;
+        for(Integer j = 0;j<records.size();j++)
+        {
+            if(records[j].Abv_Core_KAM_Competitor_Product__c==custLabelNone && records[j].Id==null)
+            {
+                records.remove(j);
+                j=j-1;
+            }
+        }
+        if(records.size()> listUsedToCheck.size())
+        {
+            inedit=true;
+            inedit1=true;
+        }
+   
+        for(Abv_Core_KAM_Competitor_Sales__c s1: records)
+        { 
+            for(Abv_Core_KAM_Competitor_Sales__c s2: listUsedToCheck)
+            { 
+                if(s1.id == s2.id && (s1.Abv_Core_KAM_Competitor_Product__c != s2.Abv_Core_KAM_Competitor_Product__c  || s1.Abv_Core_KAM_January__c != s2.Abv_Core_KAM_January__c||s1.Abv_Core_KAM_February__c != s2.Abv_Core_KAM_February__c|| s1.Abv_Core_KAM_March__c != s2.Abv_Core_KAM_March__c || s1.Abv_Core_KAM_April__c != s2.Abv_Core_KAM_April__c || s1.Abv_Core_KAM_May__c != s2.Abv_Core_KAM_May__c || s1.Abv_Core_KAM_June__c != s2.Abv_Core_KAM_June__c|| s1.Abv_Core_KAM_July__c != s2.Abv_Core_KAM_July__c|| s1.Abv_Core_KAM_August__c != s2.Abv_Core_KAM_August__c||s1.Abv_Core_KAM_September__c != s2.Abv_Core_KAM_September__c|| s1.Abv_Core_KAM_October__c != s2.Abv_Core_KAM_October__c|| s1.Abv_Core_KAM_November__c != s2.Abv_Core_KAM_November__c||s1.Abv_Core_KAM_December__c != s2.Abv_Core_KAM_December__c) )
+                {
+                    toBeUpdatedList.add(s1);
+                    inedit=true;
+                    inedit1=true;
+                    break;
+                }
+                if(inedit)
+                break;
+            }
+        }
+        if(!inedit)
+        index = index + blockSize;
+    }
+    
+    /* Setting index position to the last page of the list if no unsaved data is present */
+    public void end()
+    {
+        inedite=false;
+        inedite1=false;
+        for(Integer j = 0;j<records.size();j++)
+        {
+            if(records[j].Abv_Core_KAM_Competitor_Product__c==custLabelNone && records[j].Id==null)
+            {
+                records.remove(j);
+                j=j-1;
+            }
+        }
+        if(records.size()> listUsedToCheck.size())
+        {
+            inedite=true;
+            inedite1=true;
+        }
+   
+        for(Abv_Core_KAM_Competitor_Sales__c s1: records)
+        { 
+            for(Abv_Core_KAM_Competitor_Sales__c s2: listUsedToCheck)
+            {
+                if(s1.id == s2.id && (s1.Abv_Core_KAM_Competitor_Product__c != s2.Abv_Core_KAM_Competitor_Product__c  || s1.Abv_Core_KAM_January__c != s2.Abv_Core_KAM_January__c||s1.Abv_Core_KAM_February__c != s2.Abv_Core_KAM_February__c|| s1.Abv_Core_KAM_March__c != s2.Abv_Core_KAM_March__c || s1.Abv_Core_KAM_April__c != s2.Abv_Core_KAM_April__c || s1.Abv_Core_KAM_May__c != s2.Abv_Core_KAM_May__c || s1.Abv_Core_KAM_June__c != s2.Abv_Core_KAM_June__c|| s1.Abv_Core_KAM_July__c != s2.Abv_Core_KAM_July__c|| s1.Abv_Core_KAM_August__c != s2.Abv_Core_KAM_August__c||s1.Abv_Core_KAM_September__c != s2.Abv_Core_KAM_September__c|| s1.Abv_Core_KAM_October__c != s2.Abv_Core_KAM_October__c|| s1.Abv_Core_KAM_November__c != s2.Abv_Core_KAM_November__c||s1.Abv_Core_KAM_December__c != s2.Abv_Core_KAM_December__c) )
+                {
+                    toBeUpdatedList.add(s1);
+                    inedite=true;
+                    inedite1=true;
+                    break;
+                }
+                if(inedite)
+                break;
+            }
+        }
+        if(!inedite)
+        {
+            if(totalrecs >blockSize)
+            {
+                if(math.mod(totalRecs,blockSize) == 0)
+                {
+                    index= totalRecs-blockSize;
+                }
+                else
+                {
+                   index = totalrecs - math.mod(totalRecs,blockSize);
+                }
+            }
+        }    
+    }        
+    
+    /* Functions for setting boolean values to False to hide popups related to pagination(Not navigating to another page if any unsaved data is present )  */
+    public void begining_no()
+    {
+        ineditb=false;     
+    }
+    
+    public void prev_no()
+    {
+        ineditpr=false;    
+    }
+    
+    public void next_no()
+    {
+        inedit=false;   
+    }
+    
+    public void end_no()
+    {
+        inedite=false;
+    }
+    
+    /* Functions for setting the index value to the begining, previous, next, or last page (navigations) if any unsaved data is present )  */
+    public void begining_yes()
+    {
+        ineditb=false;
+        ineditb1=false;         
+        inedit1=false;
+        ineditpr1=false;
+        inedite1=false;
+        index = 0;   
+    }
+
+    public void prev_yes()
+    {
+        ineditpr=false;
+        ineditpr1=false;
+        inedit1=false;
+        ineditb1=false;
+        inedite1=false;
+        index = index - blockSize;   
+    }
+    
+    public void next_yes()
+    {
+        inedit=false;
+        inedit1=false;
+        ineditb1=false;
+        ineditpr1=false;
+        inedite1=false;
+        index = index + blockSize;   
+    }
+    
+    public void end_yes()
+    {
+        inedite=false;
+        inedit1=false;
+        ineditb1=false;
+        ineditpr1=false;
+        inedite1=false;
+        if(totalrecs >blockSize)
+        {
+            if(math.mod(totalRecs,blockSize) == 0)
+            {
+                index= totalRecs-blockSize;
+            }
+            else
+            {
+                index = totalrecs - math.mod(totalRecs,blockSize);
+            }
+        }
+    }
+
+    
+    /* Functions to disable the pagination buttons when not necessary */
+    public boolean getprev()
+    {
+        if(index == 0)
+        return true;
+        else
+        return false;
+    }  
+    
+    public boolean getnxt()
+    {
+        totalRecs=[select count() from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c=:ApexPages.currentPage().getParameters().get('id')];       
+        if((index + blockSize) >= totalRecs)
+        {
+            return true;
+        }
+        else 
+        {
+            return false;
+        }  
+    }
+    
+    /* Delete records from the Competitor Sales grid after confirmation of deletion */
+    public void closeDel() 
+    {        
+        delpopup = false;  
+        del_lst=[select id from Abv_Core_KAM_Competitor_Sales__c  where Id =:del_id];
+    
+        Delete del_lst;
+       
+        records= [select id,Abv_Core_KAM_Competitor_Product__c,Abv_Core_KAM_January__c,Abv_Core_KAM_February__c,Abv_Core_KAM_March__c,Abv_Core_KAM_April__c,Abv_Core_KAM_May__c,Abv_Core_KAM_June__c,Abv_Core_KAM_July__c,Abv_Core_KAM_August__c,Abv_Core_KAM_September__c,Abv_Core_KAM_October__c,Abv_Core_KAM_November__c,Abv_Core_KAM_December__c,Abv_Core_KAM_Total__c,Abv_Core_KAM_Matrix__c  from Abv_Core_KAM_Competitor_Sales__c  where Abv_Core_KAM_Account__c =:ApexPages.currentPage().getParameters().get('id') order by Abv_Core_KAM_Competitor_Product__c ];
+        totalRecs=records.size();  
+        if((math.mod(totalRecs,blockSize) == 0) && (totalRecs >= blockSize) && (index == totalRecs))
+        {
+            index= index - blockSize;
+        }
+    
+    } 
+    
+    /* Functions for setting boolean variables to false to hide the popups */
+    public void closeMatrix() 
+    {        
+        matrixpopup = false;    
+    } 
+    
+    public void closeDelCancel() 
+    {        
+        delpopup = false;            
+    } 
+    
+    public void closeDupe() 
+    {        
+        dupepopup = false;    
+    }  
+    
+    public void closeNone() 
+    {        
+        nonepopup = false;    
+    }  
+    
+    public void closeValid1() 
+    {        
+        Valid1popup = false;    
+    }
+    
+    public void closeValid2() 
+    {        
+        Valid2popup = false;    
+    }
+    
+    public void closedelpopup_KAM() 
+    {        
+        delpopup_KAM= false;    
+    }
+}
