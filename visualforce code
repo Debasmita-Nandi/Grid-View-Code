@@ -1,0 +1,436 @@
+<apex:page StandardController="Account" extensions="Abv_Core_KAM_Competitor_Sales_Grid" id="thePage" cache="true" expires="2000"  > 
+
+    <div id="loading" width = "100%">Loading....</div>
+    
+    <link type="text/css" href="{!$Resource.Abv_Core_KAM_CS_cssfile}" rel="stylesheet" />
+    
+    <apex:includeScript value="https://code.jquery.com/jquery-2.1.1.min.js"/>  
+    <script>
+            
+            /* function to fetch the sales values entered in the grid */            
+            function inlineValueFetch()
+            {
+                $('[id$="January"]').each(function() { $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); }); 
+                
+                $('[id$="February"]').each(function() { $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); }); 
+                  
+                $('[id$="March"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); }); 
+                
+                $('[id$="April"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="May"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="June"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="July"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="August"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="September"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="October"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="November"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+                
+                $('[id$="December"]').each(function(){ $(this).find('span').attr('ondblclick', ($(this).find('span').attr('ondblclick')+'funcToKeyup();')); });
+            }
+            
+        $( document ).ready(function() {
+            
+            $("#loading").fadeOut("slow");
+            $("#container").fadeIn("fast");
+            inlineValueFetch();
+                            
+        });
+        
+        
+        /* Function to restrict users from entering non-numeric values */       
+        function testinput(e) 
+        {
+            var iChars2 = ",";
+            var finaloutput ="";
+            if(this.value.length > 0)
+            {
+                
+                for (var i = 0; i < this.value.length; i++) 
+                {
+                    if (iChars2.indexOf(this.value.charAt(i)) != 0) 
+                    {
+                        finaloutput =finaloutput + this.value.charAt(i)
+                    }
+                }
+                this.value = finaloutput
+            }
+                      
+            var iChars = "0123456789";
+            console.log(this);
+            if(this.value.length > 12)
+            {
+                this.value = this.value.slice(0, this.value.length - 1);
+            }
+            else
+            {
+                for (var i = 0; i < this.value.length; i++) 
+                {
+                    if (iChars.indexOf(this.value.charAt(i)) == -1) 
+                    {
+                        console.log("Please do not use special characters.");
+                        this.value = this.value.slice(0, this.value.length - 1);
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        /* Specifies the events on which non-numeric value check to be done */
+        function funcToKeyup()
+        {
+            
+            $('input[id$="_January"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_January"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_February"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_February"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_March"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_March"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_April"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_April"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_May"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_May"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_June"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_June"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_July"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_July"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_August"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_August"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_September"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_September"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_October"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_October"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_November"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_November"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            $('input[id$="_December"]').each(function(){ $(this).on('click keyup keypress', testinput); });
+            $('input[id$="_December"]').each(function(){ $(this).bind("cut copy paste",function(e) {e.preventDefault();});});
+            
+        }
+        
+        /* Functions calling action functions on click of command buttons */
+        function triggerBlurEvents()
+        { 
+            $("input").trigger("blur");           
+            SaveK();
+        }
+            
+        function triggerBlurEventsbegining1()
+        { 
+            $("input").trigger("blur");   
+            begining1();
+        }
+            
+        function triggerBlurEventsprev()
+        { 
+            $("input").trigger("blur");
+            previous();
+        }
+            
+        function triggerBlurEventsnext()
+        { 
+            $("input").trigger("blur");  
+            next();
+        }
+        
+        function triggerBlurEventsend()
+        { 
+            $("input").trigger("blur");
+            end();
+        }
+    
+        function show()
+        {
+          document.getElementById("{!$Component.thePage.theForm.thePageBlock.saveButton}").style.display='inline-block';
+          document.getElementById("{!$Component.thePage.theForm.thePageBlock.cancelButton}").style.display='inline-block';
+          document.getElementById("{!$Component.thePage.theForm.thePageBlock.AddMoreButton}").style.display='none';
+        }
+    </script>  
+    
+    <div id="container" style="display: none;">
+    <apex:form id="theForm" rendered="true" >  
+        <apex:pageBlock id="thePageBlock"  > 
+        
+            <div style="width:100%;height:40px;text-align:center;middle;">
+                
+                <apex:actionFunction name="SaveK" action="{!SaveK}"  />
+                
+                <!-- Command Buttons for Save, Cancel and Add New functionalities -->
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Save}"  oncomplete="triggerBlurEvents();" onclick="this.value = '{!$Label.ABV_CORE_KAM_Saving}'"  id="saveButton"  style="display:none" />               
+                <apex:commandButton oncomplete="inlineValueFetch();" action="{!Cancel}" value="{!$Label.ABV_CORE_KAM_Cancel}" id="cancelButton"  onclick="this.value = '{!$Label.ABV_CORE_KAM_Cancelling}'" reRender="thePageBlock" style="display: none;" />
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Add_New}"  onclick="this.value = '{!$Label.ABV_CORE_KAM_Adding}'" id="AddMoreButton" action="{!AddMore}"  style="width:57px; height:25px;"  /> 
+            
+            </div>  
+                
+            <div style="text-align:center;width:100%; height:250px;overflow:auto;">  
+                
+                <!-- Data Table to display the records for Competitor Sales with Competitor Product, Matrix, and sales values for the 12 Months -->  
+                <apex:dataTable value="{!records}" var="k" id="theDataTable"  rendered="{!records.size>0}" rowClasses="odd,even" styleClass="tableClass" > 
+                    
+                    <apex:column >
+                        <apex:selectList value="{!k.Abv_Core_KAM_Competitor_Product__c}" multiselect="false" size="1" onchange="show();"  style="border-left:4px solid;border-left-color:red;font-size: 10px;height:22px;" >
+                            <apex:selectOptions value="{!ProductNames}"/>
+                        </apex:selectList>
+                        <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_Competitor_Product__c.Label} </apex:facet>
+                    </apex:column> 
+       
+                    <apex:column id="theColMatrix">
+                        <apex:selectList value="{!k.Abv_Core_KAM_Matrix__c}" multiselect="false" size="1" onchange="show();" id="Matrix" disabled="{!IF(ISNULL(k.Id) ,false, true)}" style="font-size: 10px;height:23px;"  >
+                            <apex:selectOptions value="{!Matrix}"/>
+                        </apex:selectList>
+                        <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_Matrix__c.Label} </apex:facet>
+                    </apex:column>    
+                     
+                    <apex:column styleClass="tooltip1" title="{!k.Abv_Core_KAM_January__c}">
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_January__c)),k.Abv_Core_KAM_January__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_January__c}" id="January" > 
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_January__c.Label} </apex:facet>
+                        </div> 
+                    </apex:column>
+               
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_February__c}"> 
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_February__c)),k.Abv_Core_KAM_February__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_February__c}" id="February" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton"  /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_February__c.Label}</apex:facet>
+                        </div>
+                    </apex:column>
+               
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_March__c}" >
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_March__c)),k.Abv_Core_KAM_March__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_March__c}" id="March" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_March__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_April__c}" >
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_April__c)),k.Abv_Core_KAM_April__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_April__c}" id="April" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_April__c.Label}</apex:facet>
+                        </div>  
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_May__c}" >
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_May__c)),k.Abv_Core_KAM_May__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_May__c}" id="May" >
+                                <apex:inlineEditSupport event="ondblClick"  showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_May__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_June__c}">
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_June__c)),k.Abv_Core_KAM_June__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_June__c}" id="June" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_June__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_July__c}">
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_July__c)),k.Abv_Core_KAM_July__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_July__c}" id="July" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_July__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_August__c}" >
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_August__c)),k.Abv_Core_KAM_August__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_August__c}" id="August" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_August__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_September__c}">
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_September__c)),k.Abv_Core_KAM_September__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_September__c}" id="September" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_September__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_October__c}">
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_October__c)),k.Abv_Core_KAM_October__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_October__c}" id="October" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_October__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+                
+                    <apex:column styleClass="tooltipclass" title="{!k.Abv_Core_KAM_November__c}" >
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_November__c)),k.Abv_Core_KAM_November__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_November__c}" id="November" >
+                                <apex:inlineEditSupport event="ondblClick"   showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton" /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_November__c.Label}</apex:facet>
+                        </div>  
+                    </apex:column>
+                
+                    <apex:column style="border: 1px solid #a1b4bf" styleClass="tooltipclass" title="{!k.Abv_Core_KAM_December__c}">
+                        <div style=" color:{!IF(AND( NOT(ISBLANK(k.Abv_Core_KAM_December__c)),k.Abv_Core_KAM_December__c<0) ,'red','')};text-align: center;">
+                            <apex:outputField value="{!k.Abv_Core_KAM_December__c}" id="December" >
+                                <apex:inlineEditSupport event="ondblClick"  showOnEdit="saveButton,cancelButton" hideOnEdit="AddMoreButton"   /> 
+                            </apex:outputfield>  
+                            <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_December__c.Label}</apex:facet>
+                        </div> 
+                    </apex:column>
+             
+                    <apex:column style="background-color:{!IF(k.Abv_Core_KAM_Matrix__c=='Net Selling Price' ,'#c0c0c0','')}; border: 1px solid #a1b4bf;"  title="{!IF(k.Abv_Core_KAM_Matrix__c!='Net Selling Price',k.Abv_Core_KAM_Total__c,null)}" >
+                        <apex:outputField value="{!k.Abv_Core_KAM_Total__c}" id="Total1"  rendered="{!k.Abv_Core_KAM_Matrix__c!='Net Selling Price'}"/ >
+                        <apex:facet name="header">{!$ObjectType.Abv_Core_KAM_Competitor_Sales__c.Fields.Abv_Core_KAM_Total__c.Label}</apex:facet>
+                    </apex:column>
+             
+                         
+                    <apex:column rendered="{!IF(ISNULL(k.Id) , false , true)}">
+                        <apex:commandButton value="X" action="{!Del}" rerender="thePageBlock,delpopup,delpopup_KAM" rendered="{!IF(ISNULL(k.Id) , false , true)}"  style="color:red;font-weight:bold;width:16px; ">
+                            <apex:param name="rowToBeDeleted" value="{!k.Id}" assignTo="{!del_Id}"></apex:param>
+                        </apex:commandButton>
+                    </apex:column>    
+                   
+                </apex:dataTable> 
+            </div>
+            
+            <!-- Displays the currents number and position of records which are being shown in the data table -->  
+            <div style="width :100%; height:10px;text-align:left;" > 
+                <apex:outputText style="font-size:20px; color: #ededed " rendered="{!totalRecs>0}" >
+                    {!$Label.ABV_CORE_KAM_Showing} {!curRecs} {!$Label.ABV_CORE_KAM_of} {!totalRecs} {!$Label.ABV_CORE_KAM_records}
+                </apex:outputText>
+            </div>
+            
+            <!-- Action Functions to stamp the index and range of the records to be shown in the data table -->
+            <apex:actionFunction name="begining1" action="{!begining1}" oncomplete="inlineValueFetch();"  /> 
+            <apex:actionFunction name="previous" action="{!previous}" oncomplete="inlineValueFetch();" />
+            <apex:actionFunction name="end" action="{!end}" oncomplete="inlineValueFetch();" />
+            <apex:actionFunction name="next" action="{!next}" oncomplete="inlineValueFetch();" /> 
+            
+            <div style="width :1000px; height:35px;text-align:center;" > 
+                
+                <!-- Command Buttons to navigate through pagination functionality  -->
+                <apex:commandButton value="◄◄" rerender="ineditpopup_begining" oncomplete="triggerBlurEventsbegining1();inlineValueFetch();"   disabled="{!prev}"   />
+                <apex:commandButton value="◄" rerender="ineditpopup_previous" oncomplete="triggerBlurEventsprev();inlineValueFetch();"  disabled="{!prev}"/>
+                <apex:commandButton value="►" rerender="ineditpopup_next"   oncomplete="triggerBlurEventsnext();inlineValueFetch();" disabled="{!nxt}" />
+                <apex:commandButton value="►►" rerender="ineditpopup_end" disabled="{!nxt}" oncomplete="triggerBlurEventsend();inlineValueFetch();"  /> 
+                
+            </div>
+        </apex:pageBlock>       
+        
+        <!-- Output Panel popup to be displayed when navigating to the first page, having any unsaved data in current page  -->
+        <apex:outputPanel id="ineditpopup_begining">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!ineditb}"/> 
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!ineditb}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_10} <br/><br/>{!$Label.ABV_CORE_KAM_Popup_23} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Stay_on_this_Page}" action="{!begining_no}" oncomplete="show();inlineValueFetch();" rerender="ineditpopup_begining" /> &nbsp;&nbsp;&nbsp;               
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Leave_this_page}" action="{!begining_yes}" rerender="ineditpopup_begining,thePageBlock" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed when navigating to the previous page, having any unsaved data in current page  -->
+        <apex:outputPanel id="ineditpopup_previous">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!ineditpr}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!ineditpr}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_10} <br/><br/>  {!$Label.ABV_CORE_KAM_Popup_23} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Stay_on_this_Page}" action="{!prev_no}" oncomplete="show();inlineValueFetch();" rerender="ineditpopup_previous" /> &nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Leave_this_page}" action="{!prev_yes}" rerender="ineditpopup_previous,thePageBlock" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed when navigating to the next page, having any unsaved data in current page  -->
+        <apex:outputPanel id="ineditpopup_next">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!inedit}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!inedit}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_10} <br/><br/>  {!$Label.ABV_CORE_KAM_Popup_23} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Stay_on_this_Page}" action="{!next_no}" oncomplete="show();inlineValueFetch();" rerender="ineditpopup_next" /> &nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Leave_this_page}" action="{!next_yes}" rerender="ineditpopup_next,thePageBlock" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed when navigating to the last page, having any unsaved data in current page  -->
+        <apex:outputPanel id="ineditpopup_end">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!inedite}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!inedite}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_10} <br/><br/>  {!$Label.ABV_CORE_KAM_Popup_23} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Stay_on_this_Page}" action="{!end_no}" oncomplete="show();inlineValueFetch();" rerender="ineditpopup_end" />   &nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_Leave_this_page}" action="{!end_yes}" rerender="ineditpopup_end,thePageBlock" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed when a record is saved without entering any Competitor Product  -->
+        <apex:outputPanel id="nonepopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!nonepopup}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!nonepopup }" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_11} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_OK}" action="{!closeNone}" rerender="nonepopup" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed when a record is saved without entering any Matrix  -->
+        <apex:outputPanel id="matrixpopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!matrixpopup}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!matrixpopup}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_12} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_OK}" action="{!closeMatrix}" rerender="matrixpopup" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed for confirmation when a Competitor Sales record is deleted  -->
+        <apex:outputPanel id="delpopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!delpopup}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!delpopup}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_13} <br/><br/>
+                <apex:commandButton value=" {!$Label.ABV_CORE_KAM_Yes} " action="{!closeDel}" rerender="delpopup,thePageBlock" oncomplete="inlineValueFetch();" onclick="this.value = '{!$Label.ABV_CORE_KAM_Deleting}'"/>   &nbsp;&nbsp;
+                <apex:commandButton value=" {!$Label.ABV_CORE_KAM_No} " action="{!closeDelCancel}"  rerender="delpopup" oncomplete="inlineValueFetch();"/>    
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed if an invalid Sales Values is entered and Saved -->
+        <apex:outputPanel id="valid1popup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!valid1popup }"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!valid1popup }" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_14} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_OK}" action="{!closeValid1}" rerender="valid1popup" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed while saving if selected Competitor Product and Matrix combination is alredy present  -->
+        <apex:outputPanel id="valid2popup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!valid2popup }"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!valid2popup }" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_15} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_OK}" action="{!closeValid2}"  rerender="valid2popup" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+        <!-- Output Panel popup to be displayed if a non NKAM user is trying to delete a Competitor Sales record   -->
+        <apex:outputPanel id="delpopup_KAM">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!delpopup_KAM}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!delpopup_KAM}" style="text-align: center;vertical-align: middle;" >
+                {!$Label.ABV_CORE_KAM_Popup_22} <br/><br/>
+                <apex:commandButton value="{!$Label.ABV_CORE_KAM_OK}" action="{!closedelpopup_KAM}" rerender="delpopup_KAM,thePageBlock" oncomplete="inlineValueFetch();"/>
+            </apex:outputPanel>
+        </apex:outputPanel>                   
+       
+        
+    </apex:form>
+    </div>
+    
+</apex:page>
+             
